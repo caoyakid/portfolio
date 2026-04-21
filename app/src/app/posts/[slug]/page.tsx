@@ -6,11 +6,12 @@ import { authOptions } from '@/lib/auth'
 import type { Metadata } from 'next'
 
 interface Props {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = await prisma.post.findUnique({ where: { slug: params.slug } })
+  const resolvedParams = await params
+  const post = await prisma.post.findUnique({ where: { slug: resolvedParams.slug } })
   if (!post) return { title: 'Not Found' }
   return {
     title: post.title,
@@ -19,11 +20,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PostPage({ params }: Props) {
+  const resolvedParams = await params
   const session = await getServerSession(authOptions)
   const isAdmin = (session?.user as any)?.isAdmin
 
   const post = await prisma.post.findUnique({
-    where: { slug: params.slug },
+    where: { slug: resolvedParams.slug },
     include: { category: true },
   })
 
