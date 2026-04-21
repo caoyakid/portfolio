@@ -26,17 +26,32 @@ export async function POST(req: NextRequest) {
   const buffer = Buffer.from(await file.arrayBuffer())
 
   const supabase = getSupabase()
-  const { data, error } = await supabase.storage
+  let { data, error } = await supabase.storage
     .from('media')
     .upload(filename, buffer, {
       contentType: file.type,
     })
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    if (error.message === 'Bucket not found') {
+      console.log('Bucket "media" not found. Creating it dynamically...')
+      await supabase.storage.createBucket('media', { public: true })
+      // Retry upload after creating the bucket
+      const retryResult = await supabase.storage
+        .from('media')
+        .upload(filename, buffer, { contentType: file.type })
+      
+      error = retryResult.error
+      data = retryResult.data as any
+    }
+    
+    if (error) {
+      console.error('Supabase upload error:', error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
   }
 
   const { data: { publicUrl } } = supabase.storage.from('media').getPublicUrl(filename)
 
-  return NextResponse.json({ url: publicUrl, path: data.path })
+  return NextResponse.json({ url: publicUrl, path: data!.path })
 }
