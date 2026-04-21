@@ -1,5 +1,6 @@
 'use client'
 
+import React, { useRef, useState } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
@@ -12,6 +13,30 @@ interface TiptapEditorProps {
 }
 
 export function TiptapEditor({ content, onChange, placeholder = '開始撰寫…' }: TiptapEditorProps) {
+  const [isUploading, setIsUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const uploadImage = async (file: File): Promise<string | null> => {
+    setIsUploading(true)
+    const formData = new FormData()
+    formData.append('file', file)
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+      if (!res.ok) throw new Error('Upload failed')
+      const data = await res.json()
+      return data.url
+    } catch (e) {
+      console.error(e)
+      alert('圖片上傳失敗')
+      return null
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -25,6 +50,38 @@ export function TiptapEditor({ content, onChange, placeholder = '開始撰寫…
         class: 'tiptap-content prose',
         'data-placeholder': placeholder,
       },
+      handleDrop: function(view, event, slice, moved) {
+        if (!moved && event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
+          const file = event.dataTransfer.files[0]
+          if (file.type.startsWith('image/')) {
+            event.preventDefault()
+            const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY })
+            uploadImage(file).then(url => {
+              if (url && coordinates) {
+                view.dispatch(view.state.tr.insert(coordinates.pos, view.state.schema.nodes.image.create({ src: url })))
+              }
+            })
+            return true
+          }
+        }
+        return false
+      },
+      handlePaste: function(view, event, slice) {
+        if (event.clipboardData && event.clipboardData.files && event.clipboardData.files[0]) {
+          const file = event.clipboardData.files[0]
+          if (file.type.startsWith('image/')) {
+            event.preventDefault()
+            uploadImage(file).then(url => {
+              if (url) {
+                // Insert at current cursor position
+                view.dispatch(view.state.tr.replaceSelectionWith(view.state.schema.nodes.image.create({ src: url })))
+              }
+            })
+            return true
+          }
+        }
+        return false
+      }
     },
     onUpdate({ editor }) {
       onChange(editor.getHTML())
@@ -129,12 +186,26 @@ export function TiptapEditor({ content, onChange, placeholder = '開始撰寫…
         <ToolbarBtn
           id="toolbar-image"
           onClick={() => {
-            const url = window.prompt('Image URL')
-            if (url) editor.chain().focus().setImage({ src: url }).run()
+            fileInputRef.current?.click()
           }}
           active={false}
           title="Image"
-        >🖼</ToolbarBtn>
+        >{isUploading ? '⌛' : '🖼'}</ToolbarBtn>
+        <input 
+          type="file" 
+          ref={fileInputRef} 
+          style={{ display: 'none' }} 
+          accept="image/*"
+          onChange={(e) => {
+            const file = e.target.files?.[0]
+            if (file) {
+              uploadImage(file).then(url => {
+                if (url) editor.chain().focus().setImage({ src: url }).run()
+              })
+            }
+            e.target.value = '' // reset
+          }}
+        />
 
         <div style={{ width: 1, background: 'var(--color-border)', margin: '4px 4px' }} />
 
