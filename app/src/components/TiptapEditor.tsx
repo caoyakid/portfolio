@@ -19,6 +19,7 @@ export function TiptapEditor({ content, onChange, placeholder = '開始撰寫…
       Link.configure({ openOnClick: false }),
     ],
     content,
+    immediatelyRender: false,
     editorProps: {
       attributes: {
         class: 'tiptap-content prose',
