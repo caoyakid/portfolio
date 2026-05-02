@@ -96,7 +96,11 @@ export function PostsClient() {
         visitedCountries={visitedCountries}
         selectedCountry={selectedCountry}
         onCountrySelect={handleCountrySelect}
-      />
+      >
+        <div style={{ width: '100%', maxWidth: 300 }}>
+          <SearchBar />
+        </div>
+      </WorldMap>
 
       {/* Country Info Bar */}
       {selectedCountry && (
@@ -133,14 +137,8 @@ export function PostsClient() {
         </div>
       )}
 
-      <div className="section">
+      <div className="section" style={{ paddingTop: '1.5rem' }}>
         <div className="container">
-          {/* Search + filter bar */}
-          <div style={{ display: 'flex', gap: 16, marginBottom: 40, flexWrap: 'wrap' }}>
-            <div style={{ flex: 1, minWidth: 280 }}>
-              <SearchBar />
-            </div>
-          </div>
 
           {loading ? (
             <div className="grid-posts">

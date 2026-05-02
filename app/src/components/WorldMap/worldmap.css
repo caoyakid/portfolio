@@ -1,6 +1,6 @@
 /* ===== WORLD MAP ===== */
 .world-map-section {
-  padding: var(--spacing-2xl) 0 0;
+  padding: var(--spacing-lg) 0 0;
   position: relative;
   opacity: 0;
   transform: translateY(16px);

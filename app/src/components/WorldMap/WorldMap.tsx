@@ -35,6 +35,7 @@ interface WorldMapProps {
   visitedCountries: VisitedCountryData[]
   selectedCountry: VisitedCountryData | null
   onCountrySelect: (country: VisitedCountryData | null) => void
+  children?: React.ReactNode
 }
 
 // ISO Alpha-2 to ISO Numeric mapping for Natural Earth data
@@ -62,7 +63,7 @@ const COUNTRY_CODE_MAP: Record<string, string> = {
   GF:'254',
 }
 
-export function WorldMap({ visitedCountries, selectedCountry, onCountrySelect }: WorldMapProps) {
+export function WorldMap({ visitedCountries, selectedCountry, onCountrySelect, children }: WorldMapProps) {
   const { t, locale } = useI18n()
   const [tooltipData, setTooltipData] = useState<{
     country: VisitedCountryData
@@ -95,8 +96,11 @@ export function WorldMap({ visitedCountries, selectedCountry, onCountrySelect }:
             <div className="world-map-title">{t('map.title')}</div>
             <div className="world-map-hint">{t('map.clickHint')}</div>
           </div>
-          <div className="world-map-stats">
-            {visitedCountries.length} {t('map.countries')}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap-reverse', justifyContent: 'flex-end' }}>
+            <div className="world-map-stats" style={{ whiteSpace: 'nowrap' }}>
+              {visitedCountries.length} {t('map.countries')}
+            </div>
+            {children}
           </div>
         </div>
 
@@ -106,9 +110,18 @@ export function WorldMap({ visitedCountries, selectedCountry, onCountrySelect }:
               rotate: [-10, 0, 0],
               scale: 147,
             }}
+            width={800}
+            height={400}
             style={{ width: '100%', height: 'auto' }}
           >
-            <ZoomableGroup center={[0, 20]} zoom={1}>
+            <ZoomableGroup 
+              center={[0, 20]} 
+              zoom={1}
+              translateExtent={[
+                [-200, -100],
+                [1000, 500]
+              ]}
+            >
               <Geographies geography={GEO_URL}>
                 {({ geographies }) =>
                   geographies.map((geo) => {
