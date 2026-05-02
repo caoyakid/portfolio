@@ -914,3 +914,214 @@ a {
   color: var(--color-text-muted);
   text-align: center;
 }
+
+/* ===== TIMELINE ===== */
+.timeline {
+  position: relative;
+  padding-left: 28px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-border);
+}
+
+.timeline-year-group {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.timeline-year-label {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-lg);
+  position: relative;
+  left: -28px;
+  padding-left: 28px;
+}
+
+.timeline-year-label::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  border: 2px solid var(--color-bg);
+}
+
+.timeline-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.timeline-item {
+  position: relative;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.timeline-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 8px;
+  position: relative;
+  left: -23px;
+  margin-right: -23px;
+  z-index: 1;
+  border: 2px solid var(--color-bg);
+}
+
+.timeline-content {
+  flex: 1;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  transition: box-shadow var(--transition-fast);
+}
+
+.timeline-content:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.timeline-content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.timeline-title {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.timeline-category {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  background: var(--color-bg-alt);
+  border-radius: var(--radius-full);
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+.timeline-description {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+.timeline-dates {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 8px;
+}
+
+/* ===== ARCHIVE TABS ===== */
+.archive-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: var(--spacing-2xl);
+  background: var(--color-bg-alt);
+  border-radius: var(--radius-full);
+  padding: 3px;
+  width: fit-content;
+}
+
+.archive-tab {
+  padding: 8px 20px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.archive-tab.active {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.archive-tab:hover:not(.active) {
+  color: var(--color-text-primary);
+}
+
+.archive-card {
+  transition: transform var(--transition-base);
+}
+
+.archive-card:hover .post-card-cover-img {
+  transform: scale(1.05);
+}
+
+/* ===== QUOTE CARD ===== */
+.quote-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl) var(--spacing-2xl);
+  transition: all var(--transition-base);
+}
+
+.quote-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.quote-text {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  font-style: italic;
+  line-height: 1.8;
+  color: var(--color-text-primary);
+  border-left: 3px solid var(--color-accent-warm);
+  padding-left: var(--spacing-lg);
+  margin: 0;
+}
+
+.quote-title {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-top: var(--spacing-md);
+  text-align: right;
+}
+
+/* ===== EVOLUTION ===== */
+.evolution-goal-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl) var(--spacing-2xl);
+}
+
+.evolution-project-card {
+  cursor: default;
+}
+
+.evolution-project-card:hover {
+  transform: translateY(-1px);
+}
+
