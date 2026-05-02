@@ -58,34 +58,76 @@ model VerificationToken {
 }
 
 model Category {
-  id         String     @id @default(cuid())
-  name       String
-  nameEn     String
-  slug       String     @unique
-  parentId   String?
-  sortOrder  Int        @default(0)
-  parent     Category?  @relation("CategoryChildren", fields: [parentId], references: [id])
-  children   Category[] @relation("CategoryChildren")
-  posts      Post[]
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  id             String           @id @default(cuid())
+  name           String
+  nameEn         String
+  slug           String           @unique
+  parentId       String?
+  sortOrder      Int              @default(0)
+  parent         Category?        @relation("CategoryChildren", fields: [parentId], references: [id])
+  children       Category[]       @relation("CategoryChildren")
+  posts          Post[]
+  postCategories PostCategory[]
+  projects       Project[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
 }
 
 model Post {
-  id             String   @id @default(cuid())
+  id             String         @id @default(cuid())
   title          String
   titleEn        String?
-  slug           String   @unique
-  body           String   @db.Text
+  slug           String         @unique
+  body           String         @db.Text
   coverImageUrl  String?
-  status         String   @default("public") // "public" | "locked"
+  status         String         @default("public") // "public" | "locked" | "private"
   passwordHash   String?
+  type           String         @default("post")   // "post" | "movie" | "series" | "book" | "quote" | "project-log"
   categoryId     String?
-  tags           String[] @default([])
-  searchVector   String?  @db.Text
-  category       Category? @relation(fields: [categoryId], references: [id])
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  tags           String[]       @default([])
+  searchVector   String?        @db.Text
+  projectId      String?
+  category       Category?      @relation(fields: [categoryId], references: [id])
+  categories     PostCategory[]
+  project        Project?       @relation(fields: [projectId], references: [id])
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model PostCategory {
+  postId     String
+  categoryId String
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([postId, categoryId])
+}
+
+model Project {
+  id          String    @id @default(cuid())
+  title       String
+  titleEn     String?
+  description String?   @db.Text
+  status      String    @default("todo")    // "todo" | "in-progress" | "done"
+  year        Int
+  startDate   DateTime?
+  endDate     DateTime?
+  coverUrl    String?
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  sortOrder   Int       @default(0)
+  posts       Post[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model YearGoal {
+  id        String   @id @default(cuid())
+  year      Int      @unique
+  content   String   @db.Text
+  contentEn String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model TimeSlot {
@@ -119,4 +161,16 @@ model HeroMedia {
   sortOrder Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model VisitedCountry {
+  id          String   @id @default(cuid())
+  countryCode String   @unique            // ISO 3166-1 alpha-2 (e.g. "JP", "TW", "FR")
+  name        String                      // Chinese name (e.g. "日本")
+  nameEn      String                      // English name (e.g. "Japan")
+  color       String   @default("#c8a882") // fill color on map
+  cities      Json     @default("[]")     // [{name, nameEn, lat, lng, landmark?}]
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
