@@ -5,12 +5,12 @@ import { Sidebar } from '@/components/Sidebar'
 
 export const metadata: Metadata = {
   title: {
-    default: 'ytoo.studio',
-    template: '%s | ytoo.studio',
+    default: 'yttoo.studio',
+    template: '%s | yttoo.studio',
   },
-  description: '攝影・旅遊・生活記錄 — ytoo.studio 個人作品集',
+  description: '攝影・旅遊・生活記錄 — yttoo.studio 個人作品集',
   openGraph: {
-    title: 'ytoo.studio',
+    title: 'yttoo.studio',
     description: '攝影・旅遊・生活記錄',
     type: 'website',
   },

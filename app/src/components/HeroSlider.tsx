@@ -14,7 +14,7 @@ interface HeroMedia {
 const FALLBACK_MEDIA: HeroMedia[] = [
   {
     id: 'fallback-1',
-    url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80',
+    url: '/DSC_2339.jpg',
     type: 'image',
     altText: 'Mountain landscape',
   },
@@ -26,7 +26,7 @@ const FALLBACK_MEDIA: HeroMedia[] = [
   },
   {
     id: 'fallback-3',
-    url: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=1920&q=80',
+    url: '/DSC_2325.jpg',
     type: 'image',
     altText: 'Ocean coast',
   },
@@ -43,7 +43,7 @@ export function HeroSlider() {
         const data = await res.json()
         if (data.length > 0) setMedia(data)
       }
-    } catch {}
+    } catch { }
   }, [])
 
   useEffect(() => {
@@ -101,8 +101,7 @@ export function HeroSlider() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.2 }}
       >
-        <h1 className="hero-title">ytoo.studio</h1>
-        <p className="hero-subtitle">攝影・旅遊・生活記錄</p>
+        <p className="hero-subtitle">Seize the flow</p>
       </motion.div>
 
       {/* Slide indicators */}
