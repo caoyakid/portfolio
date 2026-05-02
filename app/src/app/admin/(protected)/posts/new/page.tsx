@@ -23,6 +23,7 @@ export default function NewPostPage() {
     status: 'public',
     categoryId: '',
     tags: '',
+    createdAt: new Date().toISOString().slice(0, 16),
   })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -53,12 +54,19 @@ export default function NewPostPage() {
           ...form,
           tags: form.tags.split(',').map(t => t.trim()).filter(Boolean),
           categoryId: form.categoryId || null,
+          createdAt: form.createdAt ? new Date(form.createdAt).toISOString() : undefined,
         }),
       })
 
       if (!res.ok) {
-        const data = await res.json()
-        throw new Error(data.error || '儲存失敗')
+        let errStr = '儲存失敗'
+        try {
+          const data = await res.json()
+          errStr = data.error || errStr
+        } catch {
+          // If response is not JSON
+        }
+        throw new Error(errStr)
       }
 
       router.push('/admin/posts')
@@ -145,6 +153,20 @@ export default function NewPostPage() {
                   <option value="public">公開</option>
                   <option value="locked">鎖定（僅管理員可見）</option>
                 </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label" htmlFor="post-created-at">發佈/發生時間</label>
+                <input
+                  id="post-created-at"
+                  className="form-input"
+                  type="datetime-local"
+                  value={form.createdAt}
+                  onChange={e => setForm(p => ({ ...p, createdAt: e.target.value }))}
+                />
+                <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: 4 }}>
+                  可用於調整 Timeline 排序或回溯過往記憶
+                </div>
               </div>
 
               <div className="form-group">

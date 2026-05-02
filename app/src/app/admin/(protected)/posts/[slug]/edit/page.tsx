@@ -16,6 +16,7 @@ export default function EditPostPage() {
   const [form, setForm] = useState({
     title: '', titleEn: '', slug: '', body: '',
     coverImageUrl: '', status: 'public', categoryId: '', tags: '',
+    createdAt: '',
   })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -35,6 +36,7 @@ export default function EditPostPage() {
         status: post.status || 'public',
         categoryId: post.categoryId || '',
         tags: (post.tags || []).join(', '),
+        createdAt: post.createdAt ? new Date(post.createdAt).toISOString().slice(0, 16) : '',
       })
       const flat: Category[] = []
       const flatten = (c: any[]) => c.forEach(x => { flat.push(x); if (x.children) flatten(x.children) })
@@ -57,9 +59,19 @@ export default function EditPostPage() {
           ...form,
           tags: form.tags.split(',').map(t => t.trim()).filter(Boolean),
           categoryId: form.categoryId || null,
+          createdAt: form.createdAt ? new Date(form.createdAt).toISOString() : undefined,
         }),
       })
-      if (!res.ok) throw new Error('儲存失敗')
+      if (!res.ok) {
+        let errStr = '儲存失敗'
+        try {
+          const data = await res.json()
+          errStr = data.error || errStr
+        } catch {
+          // not json
+        }
+        throw new Error(errStr)
+      }
       router.push('/admin/posts')
     } catch (e: any) {
       setError(e.message)
@@ -107,6 +119,13 @@ export default function EditPostPage() {
                   <option value="public">公開</option>
                   <option value="locked">鎖定</option>
                 </select>
+              </div>
+              <div className="form-group">
+                <label className="form-label" htmlFor="edit-created-at">發佈/發生時間</label>
+                <input id="edit-created-at" className="form-input" type="datetime-local" value={form.createdAt} onChange={e => setForm(p => ({ ...p, createdAt: e.target.value }))} />
+                <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: 4 }}>
+                  可用於調整 Timeline 排序或回溯過往記憶
+                </div>
               </div>
               <div className="form-group">
                 <label className="form-label" htmlFor="edit-category">分類</label>
