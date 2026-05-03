@@ -80,7 +80,6 @@ export function Sidebar() {
           background: 'var(--color-surface)',
           border: '1px solid var(--color-border)',
           borderRadius: 8, padding: '8px',
-          display: 'none',
         }}
         id="mobile-menu-btn"
       >
