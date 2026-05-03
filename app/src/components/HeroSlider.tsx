@@ -14,7 +14,7 @@ interface HeroMedia {
 const FALLBACK_MEDIA: HeroMedia[] = [
   {
     id: 'fallback-1',
-    url: '/DSC_2339.jpg',
+    url: '/DSC_2339.JPG',
     type: 'image',
     altText: 'Mountain landscape',
   },
@@ -26,7 +26,7 @@ const FALLBACK_MEDIA: HeroMedia[] = [
   },
   {
     id: 'fallback-3',
-    url: '/DSC_2325.jpg',
+    url: '/DSC_2325.JPG',
     type: 'image',
     altText: 'Ocean coast',
   },
