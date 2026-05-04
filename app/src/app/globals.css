@@ -1004,7 +1004,14 @@ a {
   transition: box-shadow var(--transition-fast);
 }
 
-.timeline-content:hover {
+.timeline-content.is-post {
+  background: transparent;
+  border: none;
+  padding: var(--spacing-sm) 0;
+  box-shadow: none !important;
+}
+
+.timeline-content:not(.is-post):hover {
   box-shadow: var(--shadow-sm);
 }
 

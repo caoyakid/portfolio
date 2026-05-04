@@ -285,7 +285,7 @@ export default function ProjectsPage() {
                         background: item.isPost ? 'var(--color-accent)' : item.status === 'done' ? 'var(--color-success)' :
                                     item.status === 'in-progress' ? 'var(--color-accent-teal)' : 'var(--color-text-muted)'
                       }} />
-                      <div className="timeline-content">
+                      <div className={`timeline-content ${item.isPost ? 'is-post' : ''}`}>
                         <div className="timeline-content-header">
                           <div>
                             <div className="timeline-title">
