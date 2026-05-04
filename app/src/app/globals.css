@@ -970,9 +970,10 @@ a {
 }
 
 .timeline-items {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--spacing-lg);
+  align-items: start;
 }
 
 .timeline-item {
