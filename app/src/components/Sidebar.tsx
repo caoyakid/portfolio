@@ -14,27 +14,49 @@ interface Category {
   children?: Category[]
 }
 
-function CategoryTree({ categories, depth = 0 }: { categories: Category[]; depth?: number }) {
+function CategoryTree({ categories }: { categories: Category[] }) {
   const { locale } = useI18n()
-  const pathname = usePathname()
+
+  const flatCategories = categories.reduce((acc, cat) => {
+    return [...acc, cat, ...(cat.children ? cat.children : [])]
+  }, [] as Category[])
+
+  const colors = [
+    { bg: '#E3F2FD', text: '#1565C0' },
+    { bg: '#F3E5F5', text: '#6A1B9A' },
+    { bg: '#E8F5E9', text: '#2E7D32' },
+    { bg: '#FFF3E0', text: '#EF6C00' },
+    { bg: '#FFEBEE', text: '#C62828' },
+    { bg: '#FBE9E7', text: '#D84315' },
+    { bg: '#E0F2F1', text: '#00695C' }
+  ]
 
   return (
-    <>
-      {categories.map((cat) => (
-        <div key={cat.id}>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', padding: '0 24px' }}>
+      {flatCategories.map((cat, i) => {
+        const color = colors[i % colors.length]
+        return (
           <Link
+            key={cat.id}
             href={`/posts?category=${cat.slug}`}
-            className={`sidebar-link ${pathname === `/posts` ? '' : ''}`}
-            style={{ paddingLeft: `${(depth + 1) * 16}px` }}
+            style={{
+              padding: '4px 10px',
+              fontSize: '0.75rem',
+              fontWeight: 500,
+              backgroundColor: color.bg,
+              color: color.text,
+              borderRadius: 'var(--radius-full)',
+              textDecoration: 'none',
+              transition: 'transform 0.2s',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
-            <span>{locale === 'zh' ? cat.name : cat.nameEn}</span>
+            #{locale === 'zh' ? cat.name : cat.nameEn}
           </Link>
-          {cat.children && cat.children.length > 0 && (
-            <CategoryTree categories={cat.children} depth={depth + 1} />
-          )}
-        </div>
-      ))}
-    </>
+        )
+      })}
+    </div>
   )
 }
 
@@ -242,19 +264,7 @@ export function Sidebar() {
 
         {/* Bottom */}
         <div className="sidebar-bottom">
-          {/* Language toggle */}
-          <div className="lang-toggle" style={{ marginBottom: 12 }}>
-            {(['zh', 'en', 'ja', 'ko'] as Locale[]).map((lang) => (
-              <button
-                key={lang}
-                className={`lang-btn ${locale === lang ? 'active' : ''}`}
-                onClick={() => setLocale(lang)}
-                id={`lang-${lang}`}
-              >
-                {lang === 'zh' ? '中' : lang === 'en' ? 'EN' : lang === 'ja' ? '日' : '한'}
-              </button>
-            ))}
-          </div>
+          {/* Language toggle moved to fixed bottom-right */}
 
           {session ? (
             <button
@@ -280,6 +290,42 @@ export function Sidebar() {
           )}
         </div>
       </nav>
+
+      {/* Floating Language Switcher */}
+      <div style={{
+        position: 'fixed',
+        bottom: 24,
+        right: 24,
+        zIndex: 1000,
+        display: 'flex',
+        gap: 4,
+        background: 'rgba(250, 250, 249, 0.8)',
+        backdropFilter: 'blur(10px)',
+        padding: '6px',
+        borderRadius: 'var(--radius-full)',
+        boxShadow: 'var(--shadow-md)',
+        border: '1px solid var(--color-border)',
+      }}>
+        {(['zh', 'en', 'ja', 'ko'] as Locale[]).map((lang) => (
+          <button
+            key={lang}
+            onClick={() => setLocale(lang)}
+            style={{
+              padding: '6px 12px',
+              fontSize: '0.8rem',
+              fontWeight: locale === lang ? 600 : 400,
+              borderRadius: 'var(--radius-full)',
+              border: 'none',
+              background: locale === lang ? 'var(--color-text-primary)' : 'transparent',
+              color: locale === lang ? 'var(--color-surface)' : 'var(--color-text-secondary)',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            {lang === 'zh' ? '中' : lang === 'en' ? 'EN' : lang === 'ja' ? '日' : '한'}
+          </button>
+        ))}
+      </div>
     </>
   )
 }
