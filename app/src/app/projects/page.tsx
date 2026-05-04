@@ -100,23 +100,29 @@ export default function ProjectsPage() {
     })
 
     posts.forEach(post => {
-      const isTravel = post.category?.slug.toLowerCase().includes('travel') || post.category?.name.includes('旅遊')
-      if (isTravel) {
-        const year = new Date(post.createdAt).getFullYear()
-        if (!grouped[year]) grouped[year] = []
-        grouped[year].push({
-          id: `post-${post.id}`,
-          title: post.title,
-          titleEn: post.titleEn,
-          status: 'done', // Treat posts as done
-          year: year,
-          startDate: post.createdAt,
-          category: post.category,
-          isPost: true,
-          slug: post.slug,
-          createdAt: post.createdAt
-        })
-      }
+      const year = new Date(post.createdAt).getFullYear()
+      if (!grouped[year]) grouped[year] = []
+      
+      let icon = '📝'
+      const catSlug = post.category?.slug.toLowerCase() || ''
+      const catName = post.category?.name || ''
+      if (catSlug.includes('travel') || catName.includes('旅遊')) icon = '✈️'
+      else if (catSlug.includes('movie') || catName.includes('電影')) icon = '🎬'
+      else if (catSlug.includes('book') || catName.includes('書')) icon = '📚'
+      else if (catSlug.includes('mindset') || catName.includes('思維')) icon = '💡'
+
+      grouped[year].push({
+        id: `post-${post.id}`,
+        title: `${icon} ${post.title}`,
+        titleEn: post.titleEn ? `${icon} ${post.titleEn}` : undefined,
+        status: 'done', // Treat posts as done
+        year: year,
+        startDate: post.createdAt,
+        category: post.category,
+        isPost: true,
+        slug: post.slug,
+        createdAt: post.createdAt
+      })
     })
 
     return Object.entries(grouped)
@@ -285,7 +291,7 @@ export default function ProjectsPage() {
                             <div className="timeline-title">
                               {item.isPost ? (
                                 <Link href={`/posts/${item.slug}`} style={{ textDecoration: 'none', color: 'inherit' }} onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'} onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}>
-                                  ✈️ {locale === 'en' && item.titleEn ? item.titleEn : item.title}
+                                  {locale === 'en' && item.titleEn ? item.titleEn : item.title}
                                 </Link>
                               ) : (
                                 locale === 'en' && item.titleEn ? item.titleEn : item.title
