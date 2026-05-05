@@ -112,6 +112,7 @@ export default function ProjectsPage() {
       else if (catSlug.includes('movie') || catName.includes('電影')) { icon = '🎬'; isMiniPost = true; miniCategory = 'movie' }
       else if (catSlug.includes('series') || catName.includes('影集')) { icon = '📺'; isMiniPost = true; miniCategory = 'series' }
       else if (catSlug.includes('book') || catName.includes('書')) { icon = '📚'; isMiniPost = true; miniCategory = 'book' }
+      else if (catSlug.includes('anime') || catName.includes('動漫') || catName.includes('動畫')) { icon = '🌸'; isMiniPost = true; miniCategory = 'anime' }
       else if (catSlug.includes('mindset') || catName.includes('思維')) icon = '💡'
 
       grouped[year].push({
@@ -274,74 +275,103 @@ export default function ProjectsPage() {
           </div>
         ) : (
           <div className="timeline">
-            {itemsByYear.map(([year, yearItems]) => (
+            {itemsByYear.map(([year, yearItems]) => {
+              const items = (yearItems as any[]).filter(p => p.status !== 'todo')
+              const miniItems = items.filter(p => p.isMiniPost)
+              const majorItems = items.filter(p => !p.isMiniPost)
+
+              return (
               <div key={year as string} className="timeline-year-group">
                 <div className="timeline-year-label">{year as string}</div>
-                <div className="timeline-items">
-                  {(yearItems as any[]).filter(p => p.status !== 'todo').map((item, i) => (
-                    <motion.div
-                      key={item.id}
-                      className={`timeline-item ${item.isMiniPost ? 'is-mini-post' : ''}`}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.3, delay: i * 0.05 }}
-                    >
-                      <div className="timeline-dot" style={{
-                        background: item.isPost ? 'var(--color-accent)' : item.status === 'done' ? 'var(--color-success)' :
-                                    item.status === 'in-progress' ? 'var(--color-accent-teal)' : 'var(--color-text-muted)'
-                      }} />
-                      <div className={`timeline-content ${item.isPost ? 'is-post' : ''} ${item.isMiniPost ? 'is-mini-post' : ''}`} data-cat={item.miniCategory}>
-                        <div className="timeline-content-header">
-                          <div>
-                            <div className="timeline-title">
-                              {item.isPost ? (
-                                <Link href={`/posts/${item.slug}`} style={{ textDecoration: 'none', color: 'inherit' }} onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'} onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}>
-                                  {locale === 'en' && item.titleEn ? item.titleEn : item.title}
-                                </Link>
-                              ) : (
-                                locale === 'en' && item.titleEn ? item.titleEn : item.title
+                
+                {miniItems.length > 0 && (
+                  <div className="timeline-mini-cluster" style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 24 }}>
+                    {miniItems.map((item, i) => (
+                      <motion.div
+                        key={item.id}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.2, delay: i * 0.03 }}
+                      >
+                        <Link href={`/posts/${item.slug}`} style={{ textDecoration: 'none' }}>
+                          <div className="timeline-content is-mini-post" data-cat={item.miniCategory}>
+                            <span className="timeline-title">
+                              {locale === 'en' && item.titleEn ? item.titleEn : item.title}
+                            </span>
+                          </div>
+                        </Link>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+
+                {majorItems.length > 0 && (
+                  <div className="timeline-items">
+                    {majorItems.map((item, i) => (
+                      <motion.div
+                        key={item.id}
+                        className="timeline-item"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.3, delay: i * 0.05 }}
+                      >
+                        <div className="timeline-dot" style={{
+                          background: item.isPost ? 'var(--color-accent)' : item.status === 'done' ? 'var(--color-success)' :
+                                      item.status === 'in-progress' ? 'var(--color-accent-teal)' : 'var(--color-text-muted)'
+                        }} />
+                        <div className={`timeline-content ${item.isPost ? 'is-post' : ''}`}>
+                          <div className="timeline-content-header">
+                            <div>
+                              <div className="timeline-title">
+                                {item.isPost ? (
+                                  <Link href={`/posts/${item.slug}`} style={{ textDecoration: 'none', color: 'inherit' }} onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'} onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}>
+                                    {locale === 'en' && item.titleEn ? item.titleEn : item.title}
+                                  </Link>
+                                ) : (
+                                  locale === 'en' && item.titleEn ? item.titleEn : item.title
+                                )}
+                              </div>
+                              {item.category && (
+                                <span className="timeline-category">
+                                  {locale === 'zh' ? item.category.name : item.category.nameEn}
+                                </span>
                               )}
                             </div>
-                            {item.category && (
-                              <span className="timeline-category">
-                                {locale === 'zh' ? item.category.name : item.category.nameEn}
-                              </span>
-                            )}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                              {!item.isPost ? (
+                                <span className={`badge badge-${item.status === 'done' ? 'confirmed' : item.status === 'in-progress' ? 'pending' : 'unavailable'}`}>
+                                  {getStatusLabel(item.status)}
+                                </span>
+                              ) : (
+                                <span className="badge" style={{ background: 'var(--color-bg-alt)', color: 'var(--color-text-primary)' }}>
+                                  {locale === 'zh' ? '文章' : 'Post'}
+                                </span>
+                              )}
+                              {!item.isPost && isAdmin && (
+                                <div style={{ display: 'flex', gap: 4 }}>
+                                  <button className="btn btn-ghost btn-sm" onClick={() => openEdit(item)}>{t('common.edit')}</button>
+                                  <button className="btn btn-ghost btn-sm" style={{ color: 'var(--color-error)' }} onClick={() => handleDelete(item.id)}>{t('common.delete')}</button>
+                                </div>
+                              )}
+                            </div>
                           </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            {!item.isPost ? (
-                              <span className={`badge badge-${item.status === 'done' ? 'confirmed' : item.status === 'in-progress' ? 'pending' : 'unavailable'}`}>
-                                {getStatusLabel(item.status)}
-                              </span>
-                            ) : (
-                              <span className="badge" style={{ background: 'var(--color-bg-alt)', color: 'var(--color-text-primary)' }}>
-                                {locale === 'zh' ? '文章' : 'Post'}
-                              </span>
-                            )}
-                            {!item.isPost && isAdmin && (
-                              <div style={{ display: 'flex', gap: 4 }}>
-                                <button className="btn btn-ghost btn-sm" onClick={() => openEdit(item)}>{t('common.edit')}</button>
-                                <button className="btn btn-ghost btn-sm" style={{ color: 'var(--color-error)' }} onClick={() => handleDelete(item.id)}>{t('common.delete')}</button>
-                              </div>
-                            )}
+                          {!item.isPost && item.description && (
+                            <p className="timeline-description">
+                              {item.description}
+                            </p>
+                          )}
+                          <div className="timeline-dates">
+                            {formatDate(item.startDate)}
+                            {!item.isPost && item.startDate && ' — '}
+                            {!item.isPost && (formatDate(item.endDate) || (item.startDate ? '' : ''))}
                           </div>
                         </div>
-                        {!item.isPost && item.description && (
-                          <p className="timeline-description">
-                            {item.description}
-                          </p>
-                        )}
-                        <div className="timeline-dates">
-                          {formatDate(item.startDate)}
-                          {!item.isPost && item.startDate && ' — '}
-                          {!item.isPost && (formatDate(item.endDate) || (item.startDate ? '' : ''))}
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
               </div>
-            ))}
+            )})}
           </div>
         )}
 
