@@ -104,11 +104,14 @@ export default function ProjectsPage() {
       if (!grouped[year]) grouped[year] = []
       
       let icon = '📝'
+      let isMiniPost = false
+      let miniCategory = ''
       const catSlug = post.category?.slug.toLowerCase() || ''
       const catName = post.category?.name || ''
       if (catSlug.includes('travel') || catName.includes('旅遊')) icon = '✈️'
-      else if (catSlug.includes('movie') || catName.includes('電影')) icon = '🎬'
-      else if (catSlug.includes('book') || catName.includes('書')) icon = '📚'
+      else if (catSlug.includes('movie') || catName.includes('電影')) { icon = '🎬'; isMiniPost = true; miniCategory = 'movie' }
+      else if (catSlug.includes('series') || catName.includes('影集')) { icon = '📺'; isMiniPost = true; miniCategory = 'series' }
+      else if (catSlug.includes('book') || catName.includes('書')) { icon = '📚'; isMiniPost = true; miniCategory = 'book' }
       else if (catSlug.includes('mindset') || catName.includes('思維')) icon = '💡'
 
       grouped[year].push({
@@ -120,6 +123,8 @@ export default function ProjectsPage() {
         startDate: post.createdAt,
         category: post.category,
         isPost: true,
+        isMiniPost,
+        miniCategory,
         slug: post.slug,
         createdAt: post.createdAt
       })
@@ -276,7 +281,7 @@ export default function ProjectsPage() {
                   {(yearItems as any[]).filter(p => p.status !== 'todo').map((item, i) => (
                     <motion.div
                       key={item.id}
-                      className="timeline-item"
+                      className={`timeline-item ${item.isMiniPost ? 'is-mini-post' : ''}`}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.3, delay: i * 0.05 }}
@@ -285,7 +290,7 @@ export default function ProjectsPage() {
                         background: item.isPost ? 'var(--color-accent)' : item.status === 'done' ? 'var(--color-success)' :
                                     item.status === 'in-progress' ? 'var(--color-accent-teal)' : 'var(--color-text-muted)'
                       }} />
-                      <div className={`timeline-content ${item.isPost ? 'is-post' : ''}`}>
+                      <div className={`timeline-content ${item.isPost ? 'is-post' : ''} ${item.isMiniPost ? 'is-mini-post' : ''}`} data-cat={item.miniCategory}>
                         <div className="timeline-content-header">
                           <div>
                             <div className="timeline-title">

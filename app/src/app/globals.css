@@ -1012,7 +1012,38 @@ a {
   box-shadow: none !important;
 }
 
-.timeline-content:not(.is-post):hover {
+/* Mini Posts (Movie, Series, Book) */
+.timeline-item.is-mini-post {
+  align-items: center;
+}
+.timeline-item.is-mini-post .timeline-dot {
+  display: none;
+}
+.timeline-content.is-mini-post {
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border: 1px solid transparent;
+}
+.timeline-content.is-mini-post .timeline-title {
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: var(--font-sans);
+}
+.timeline-content.is-mini-post .timeline-category,
+.timeline-content.is-mini-post .timeline-dates,
+.timeline-content.is-mini-post .badge {
+  display: none; /* Hide everything except title for mini posts */
+}
+
+/* Distinct colors for mini posts */
+.timeline-content.is-mini-post[data-cat="movie"] { background: #FFF3E0; border-color: #FFE0B2; color: #E65100; }
+.timeline-content.is-mini-post[data-cat="series"] { background: #F3E5F5; border-color: #E1BEE7; color: #6A1B9A; }
+.timeline-content.is-mini-post[data-cat="book"] { background: #E8F5E9; border-color: #C8E6C9; color: #2E7D32; }
+
+.timeline-content:not(.is-post):not(.is-mini-post):hover {
   box-shadow: var(--shadow-sm);
 }
 

@@ -27,7 +27,7 @@ export default function ArchivePage() {
 
   useEffect(() => {
     setLoading(true)
-    fetch(`/api/posts?type=${activeTab}&limit=50`)
+    fetch(`/api/posts?category=${activeTab}&limit=50`)
       .then(res => res.json())
       .then(data => setPosts(data.posts || []))
       .finally(() => setLoading(false))
