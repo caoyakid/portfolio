@@ -179,6 +179,7 @@ export function Sidebar() {
           {/* Projects sub-nav */}
           {pathname.startsWith('/projects') && (
             <div className="sidebar-section" style={{ paddingLeft: 'var(--spacing-md)' }}>
+              {/* 
               <Link
                 href="/projects/archive"
                 className={`sidebar-link ${pathname === '/projects/archive' ? 'active' : ''}`}
@@ -187,6 +188,7 @@ export function Sidebar() {
               >
                 <span style={{ fontSize: '0.85rem' }}>📁 {t('projects.archive')}</span>
               </Link>
+              */}
               <Link
                 href="/projects/mindset"
                 className={`sidebar-link ${pathname === '/projects/mindset' ? 'active' : ''}`}
