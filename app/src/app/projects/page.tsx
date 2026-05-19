@@ -100,20 +100,25 @@ export default function ProjectsPage() {
     })
 
     posts.forEach(post => {
+      const catSlug = post.category?.slug.toLowerCase() || ''
+      const catName = post.category?.name || ''
+
+      // 過濾掉思維類文章，不顯示在 Timeline 中
+      if (catSlug.includes('mindset') || catName.includes('思維')) {
+        return
+      }
+
       const year = new Date(post.createdAt).getFullYear()
       if (!grouped[year]) grouped[year] = []
       
       let icon = '📝'
       let isMiniPost = false
       let miniCategory = ''
-      const catSlug = post.category?.slug.toLowerCase() || ''
-      const catName = post.category?.name || ''
       if (catSlug.includes('travel') || catName.includes('旅遊')) icon = '✈️'
       else if (catSlug.includes('movie') || catName.includes('電影')) { icon = '🎬'; isMiniPost = true; miniCategory = 'movie' }
       else if (catSlug.includes('series') || catName.includes('影集')) { icon = '📺'; isMiniPost = true; miniCategory = 'series' }
       else if (catSlug.includes('book') || catName.includes('書')) { icon = '📚'; isMiniPost = true; miniCategory = 'book' }
       else if (catSlug.includes('anime') || catName.includes('動漫') || catName.includes('動畫')) { icon = '🌸'; isMiniPost = true; miniCategory = 'anime' }
-      else if (catSlug.includes('mindset') || catName.includes('思維')) icon = '💡'
 
       grouped[year].push({
         id: `post-${post.id}`,
