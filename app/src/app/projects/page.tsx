@@ -103,6 +103,14 @@ export default function ProjectsPage() {
       const catSlug = post.category?.slug.toLowerCase() || ''
       const catName = post.category?.name || ''
 
+      const isMindset = catSlug.includes('mindset') || catName.includes('思維')
+      const isEvolution = catSlug.includes('evolution') || catName.includes('進化')
+
+      // 如果是思維或進化，且當前不是管理員(未登入)，則不顯示在 Timeline
+      if ((isMindset || isEvolution) && !isAdmin) {
+        return
+      }
+
       const year = new Date(post.createdAt).getFullYear()
       if (!grouped[year]) grouped[year] = []
       
@@ -114,8 +122,8 @@ export default function ProjectsPage() {
       else if (catSlug.includes('series') || catName.includes('影集')) { icon = '📺'; isMiniPost = true; miniCategory = 'series' }
       else if (catSlug.includes('book') || catName.includes('書')) { icon = '📚'; isMiniPost = true; miniCategory = 'book' }
       else if (catSlug.includes('anime') || catName.includes('動漫') || catName.includes('動畫')) { icon = '🌸'; isMiniPost = true; miniCategory = 'anime' }
-      else if (catSlug.includes('mindset') || catName.includes('思維')) icon = '💡'
-      else if (catSlug.includes('evolution') || catName.includes('進化')) icon = '🌱'
+      else if (isMindset) { icon = '💡'; isMiniPost = true; miniCategory = 'mindset' }
+      else if (isEvolution) { icon = '🌱'; isMiniPost = true; miniCategory = 'evolution' }
 
       grouped[year].push({
         id: `post-${post.id}`,
@@ -143,7 +151,7 @@ export default function ProjectsPage() {
         })
         return [year, items]
       })
-  }, [projects, posts])
+  }, [projects, posts, isAdmin])
 
   // Bucket list = projects with status "todo"
   const bucketList = useMemo(() =>
