@@ -190,14 +190,6 @@ export function Sidebar() {
               </Link>
               */}
               <Link
-                href="/projects/mindset"
-                className={`sidebar-link ${pathname === '/projects/mindset' ? 'active' : ''}`}
-                onClick={() => setMobileOpen(false)}
-                style={{ paddingLeft: 24 }}
-              >
-                <span style={{ fontSize: '0.85rem' }}>💡 {t('projects.mindset')}</span>
-              </Link>
-              <Link
                 href="/projects/evolution"
                 className={`sidebar-link ${pathname === '/projects/evolution' ? 'active' : ''}`}
                 onClick={() => setMobileOpen(false)}
